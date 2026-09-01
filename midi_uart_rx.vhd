@@ -48,8 +48,8 @@ begin
   u_cnt: entity work.bit_counter10
     port map (clk=>clk, rst=>rst, clr=>cnt_clr, inc=>shift_en, tc10=>cnt_tc);
 
-  -- 10-bit shift register, **right shift**, new bit enters MSB
-  u_sr: entity work.shift_register10
+  -- 10-bit shift register; newest sample enters bit 0
+  u_sr: entity work.shift_reg10
     port map (clk=>clk, rst=>rst, clr=>sr_clr, shift_en=>shift_en,
               din=>rx_sync, q=>sr_q);
 
@@ -107,7 +107,7 @@ begin
     end if;
   end process;
 
-  -- Explicit mapping: d7..d0
-  byte_data <= sr_q(8) & sr_q(7) & sr_q(6) & sr_q(5) &
-               sr_q(4) & sr_q(3) & sr_q(2) & sr_q(1);
+  -- Samples are stored as: stop, d7, ..., d0, start in q(0)..q(9).
+  byte_data <= sr_q(1) & sr_q(2) & sr_q(3) & sr_q(4) &
+               sr_q(5) & sr_q(6) & sr_q(7) & sr_q(8);
 end architecture;

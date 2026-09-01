@@ -11,6 +11,7 @@ entity midi_baud is
         clk      : in  std_logic;
         rst      : in  std_logic;
         en       : in  std_logic;           -- enable ticks while in a frame
+        clr      : in  std_logic;           -- restart timing from the current sample
         tick_half: out std_logic;           -- pulse at ~Tbit/2
         tick_bit : out std_logic            -- pulse every Tbit
     );
@@ -25,7 +26,7 @@ begin
     process(clk)
     begin
         if rising_edge(clk) then
-            if rst='1' or en='0' then
+            if rst='1' or en='0' or clr='1' then
                 cnt        <= 0;
                 half_armed <= '0';
                 tick_half  <= '0';

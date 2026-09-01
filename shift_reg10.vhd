@@ -21,7 +21,7 @@ begin
       if rst='1' or clr='1' then
         r <= (others=>'1');
       elsif shift_en='1' then
-        r <= r(8 downto 0) & din;         -- left shift, new bit at LSB
+        r <= r(8 downto 0) & din;         -- shift toward MSB; new bit enters bit 0
       end if;
     end if;
   end process;
