@@ -1,0 +1,11 @@
+# Common VHDL simulator outputs
+work-obj*.cf
+*.ghw
+*.vcd
+*.wlf
+
+# FPGA tool-generated project/output directories
+.Xil/
+*.jou
+*.log
+*.str

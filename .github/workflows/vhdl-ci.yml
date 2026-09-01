@@ -1,0 +1,48 @@
+name: VHDL CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: GHDL 6.0.0 (mcode)
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up GHDL
+        uses: ghdl/setup-ghdl@v1
+        with:
+          version: 6.0.0
+          backend: mcode
+
+      - name: Analyze VHDL sources
+        run: |
+          ghdl -a --std=08 -Wall -Werror midi_sync_start.vhd
+          ghdl -a --std=08 -Wall -Werror midi_baud.vhd
+          ghdl -a --std=08 -Wall -Werror bit_counter10.vhd
+          ghdl -a --std=08 -Wall -Werror shift_reg10.vhd
+          ghdl -a --std=08 -Wall -Werror midi_uart_rx.vhd
+          ghdl -a --std=08 -Wall -Werror midi_parser.vhd
+          ghdl -a --std=08 -Wall -Werror midi_receiver.vhd
+          ghdl -a --std=08 -Wall -Werror midi_receiver_tb.vhd
+          ghdl -a --std=08 -Wall -Werror midi_byte_rx.vhd
+          ghdl -a --std=08 -Wall -Werror pulse_stretcher.vhd
+          ghdl -a --std=08 -Wall -Werror midi_hw_test.vhd
+
+      - name: Elaborate testbench
+        run: ghdl -e --std=08 -Wall -Werror midi_receiver_tb
+
+      - name: Run testbench
+        run: ghdl -r --std=08 midi_receiver_tb --assert-level=error --stop-time=20ms
+
+      - name: Check patch whitespace
+        run: git diff --check

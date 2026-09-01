@@ -12,15 +12,22 @@ entity sync_start is
 end entity;
 
 architecture rtl of sync_start is
-    signal d1, d2 : std_logic := '1';
+    signal d1, d2, d2_prev : std_logic := '1';
 begin
     process(clk)
     begin
         if rising_edge(clk) then
-            if rst='1' then d1<='1'; d2<='1';
-            else            d1<=rx_in; d2<=d1; end if;
+            if rst='1' then
+                d1      <= '1';
+                d2      <= '1';
+                d2_prev <= '1';
+            else
+                d1      <= rx_in;
+                d2      <= d1;
+                d2_prev <= d2;
+            end if;
         end if;
     end process;
     rx    <= d2;
-    start <= '1' when (d2='0' and d1='1') else '0';
+    start <= '1' when (d2='0' and d2_prev='1') else '0';
 end architecture;
